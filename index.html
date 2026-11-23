@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>Card Score Calculator</title>
+<style>
+:root{--bg:#101827;--panel:#1b293b;--panel2:#24364b;--text:#f5f7fb;--muted:#aebbd0;--accent:#42d6a4;--line:#34465d;--danger:#ff6b75}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0d1725,#17263a);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:22px}
+main{max-width:850px;margin:auto}.top{text-align:center;margin:8px 0 24px}.top h1{margin:0;font-size:clamp(26px,6vw,38px)}.top p{color:var(--muted);margin:7px 0}
+.toolbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer;background:var(--accent);color:#082319}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+button.danger{background:#482b37;color:#ffdce0;border:1px solid #75404b}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.team{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;min-width:0;box-shadow:0 12px 30px #0002}
+.team h2{margin:0 0 12px;font-size:18px;color:var(--muted)}
+.name{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:12px;border-radius:10px;font-size:17px;font-weight:700;outline:none}
+.score{font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center;line-height:1.25;margin:14px 0;color:var(--accent);font-variant-numeric:tabular-nums}
+.entry{display:flex;gap:8px}.entry input{min-width:0;flex:1;background:#101827;border:1px solid var(--line);border-radius:10px;padding:12px;color:white;font-size:17px}
+.entry button{padding:10px 14px}.hint{text-align:center;color:var(--muted);font-size:12px;margin:9px 0 0}
+.history{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+.history h3{margin:0 0 12px}.round{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;padding:10px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}.round span:last-child{color:var(--muted);text-align:right}
+.empty{color:var(--muted);text-align:center;padding:12px}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
+@media(max-width:560px){body{padding:14px}.teams{gap:9px}.team{padding:12px;border-radius:15px}.team h2{font-size:15px}.entry{flex-direction:column}.entry button{width:100%}.score{margin:10px 0}.name{font-size:15px;padding:10px}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>🃏 Card Score Calculator</h1><p>Keep both teams' scores in one place</p></header>
+  <div class="toolbar">
+    <button class="secondary" onclick="undo()">↶ Undo last round</button>
+    <button class="secondary" onclick="exportScores()">↓ Download score</button>
+    <button class="danger" onclick="resetGame()">Reset game</button>
+  </div>
+  <section class="teams">
+    <article class="team">
+      <h2>TEAM 1</h2>
+      <input class="name" id="name1" value="Team A" aria-label="Team 1 name">
+      <div class="score" id="score1">0</div>
+      <div class="entry"><input id="points1" type="number" inputmode="numeric" placeholder="Enter points" aria-label="Team 1 points"><button onclick="add(1)">+ Add</button></div>
+      <p class="hint">Enter this round's points</p>
+    </article>
+    <article class="team">
+      <h2>TEAM 2</h2>
+      <input class="name" id="name2" value="Team B" aria-label="Team 2 name">
+      <div class="score" id="score2">0</div>
+      <div class="entry"><input id="points2" type="number" inputmode="numeric" placeholder="Enter points" aria-label="Team 2 points"><button onclick="add(2)">+ Add</button></div>
+      <p class="hint">Enter this round's points</p>
+    </article>
+  </section>
+  <section class="history">
+    <h3>📋 Round history</h3>
+    <div id="history"><div class="empty">No rounds added yet.</div></div>
+  </section>
+  <p class="footer">Your scores stay on this device in this browser. No account or payment required.</p>
+</main>
+<script>
+let rounds = [];
+try { rounds = JSON.parse(localStorage.getItem('cardScoreRounds') || '[]'); } catch(e) { rounds=[]; }
+function totals(){return [rounds.reduce((s,r)=>s+r.a,0),rounds.reduce((s,r)=>s+r.b,0)];}
+function save(){localStorage.setItem('cardScoreRounds',JSON.stringify(rounds));render();}
+function add(team){
+  const el=document.getElementById('points'+team), raw=el.value;
+  if(raw.trim()==='' || !Number.isFinite(Number(raw))){alert('Please enter a valid score.');return;}
+  const n=Number(raw); if(!Number.isSafeInteger(n)){alert('Please enter a whole number.');return;}
+  rounds.push({a:team===1?n:0,b:team===2?n:0});
+  el.value='';save();
+}
+function undo(){if(!rounds.length){alert('There is no round to undo.');return;}rounds.pop();save();}
+function resetGame(){if(!confirm('Reset all scores and round history?'))return;rounds=[];save();}
+function render(){
+  const t=totals();document.getElementById('score1').textContent=t[0];document.getElementById('score2').textContent=t[1];
+  const h=document.getElementById('history');
+  if(!rounds.length){h.innerHTML='<div class="empty">No rounds added yet.</div>';return;}
+  h.innerHTML=rounds.map((r,i)=>`<div class="round"><span>Round ${i+1}: ${escapeHtml(document.getElementById('name1').value||'Team A')} <b>${r.a>=0?'+':''}${r.a}</b></span><span>${escapeHtml(document.getElementById('name2').value||'Team B')} <b>${r.b>=0?'+':''}${r.b}</b></span><span>${r.a+r.b>=0?'+':''}${r.a+r.b} total</span></div>`).reverse().join('');
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function exportScores(){
+ const t=totals(),n1=document.getElementById('name1').value||'Team A',n2=document.getElementById('name2').value||'Team B';
+ let out='CARD GAME SCORE\\n'+n1+': '+t[0]+'\\n'+n2+': '+t[1]+'\\n\\nROUND HISTORY\\n';
+ rounds.forEach((r,i)=>out+=`Round ${i+1}: ${n1} ${r.a} | ${n2} ${r.b}\\n`);
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'text/plain'}));a.download='card-score.txt';a.click();URL.revokeObjectURL(a.href);
+}
+document.getElementById('name1').addEventListener('input',render);
+document.getElementById('name2').addEventListener('input',render);
+document.getElementById('points1').addEventListener('keydown',e=>{if(e.key==='Enter')add(1)});
+document.getElementById('points2').addEventListener('keydown',e=>{if(e.key==='Enter')add(2)});
+render();
+</script>
+</body></html>
