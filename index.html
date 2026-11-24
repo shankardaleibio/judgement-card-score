@@ -1,106 +1,577 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101827">
-<title>Card Score Calculator</title>
-<style>
-:root{--bg:#101827;--panel:#1b293b;--panel2:#24364b;--text:#f5f7fb;--muted:#aebbd0;--accent:#42d6a4;--line:#34465d;--danger:#ff6b75}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0d1725,#17263a);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:22px}
-main{max-width:850px;margin:auto}.top{text-align:center;margin:8px 0 24px}.top h1{margin:0;font-size:clamp(26px,6vw,38px)}.top p{color:var(--muted);margin:7px 0}
-.toolbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
-button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer;background:var(--accent);color:#082319}
-button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
-button.danger{background:#482b37;color:#ffdce0;border:1px solid #75404b}
-.teams{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.team{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;min-width:0;box-shadow:0 12px 30px #0002}
-.team h2{margin:0 0 12px;font-size:18px;color:var(--muted)}
-.name{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:12px;border-radius:10px;font-size:17px;font-weight:700;outline:none}
-.score{font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center;line-height:1.25;margin:14px 0;color:var(--accent);font-variant-numeric:tabular-nums}
-.entry{display:flex;gap:8px}.entry input{min-width:0;flex:1;background:#101827;border:1px solid var(--line);border-radius:10px;padding:12px;color:white;font-size:17px}
-.entry button{padding:10px 14px}.hint{text-align:center;color:var(--muted);font-size:12px;margin:9px 0 0}
-.history{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
-.history h3{margin:0 0 12px}.round{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;padding:10px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}.round span:last-child{color:var(--muted);text-align:right}
-.empty{color:var(--muted);text-align:center;padding:12px}
-.footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
-@media(max-width:560px){body{padding:14px}.teams{gap:9px}.team{padding:12px;border-radius:15px}.team h2{font-size:15px}.entry{flex-direction:column}.entry button{width:100%}.score{margin:10px 0}.name{font-size:15px;padding:10px}}
-</style>
-</head><link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#101827">
+<meta name="theme-color" content="#651c25">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.json">
+<title>Judgement | Odisha Edition</title>
+
+<style>
+:root {
+  --red:#791f2c;
+  --dark:#43151e;
+  --gold:#d6a441;
+  --yellow:#f5d78c;
+  --cream:#fff8e9;
+  --paper:#f8edda;
+  --text:#422b27;
+  --muted:#94766b;
+  --green:#176b52;
+  --border:#dfbd83;
+}
+
+* {box-sizing:border-box}
+
+body {
+  margin:0;
+  min-height:100vh;
+  padding:20px 14px;
+  color:var(--text);
+  font-family:Georgia,'Times New Roman',serif;
+  background:
+    radial-gradient(ellipse at top,#fff5df 0%,transparent 65%),
+    linear-gradient(135deg,#e9d2ad,#f8edda,#e8d0aa);
+}
+
+main {max-width:780px;margin:auto}
+
+header {
+  text-align:center;
+  padding:23px 12px 18px;
+  background:var(--red);
+  color:var(--cream);
+  border:3px double var(--gold);
+  border-radius:20px 20px 5px 5px;
+  position:relative;
+  overflow:hidden;
+}
+
+header:before,header:after {
+  content:"❀";
+  position:absolute;
+  color:var(--gold);
+  font-size:45px;
+  top:10px;
+  opacity:.75;
+}
+
+header:before {left:14px}
+header:after {right:14px}
+
+.eyebrow {
+  color:var(--yellow);
+  font-size:11px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+}
+
+header h1 {
+  margin:9px 0;
+  font-size:clamp(27px,6vw,39px);
+}
+
+header p {
+  margin:0;
+  color:#f4dfbb;
+  font-size:13px;
+}
+
+.ornament {
+  text-align:center;
+  color:var(--red);
+  font-size:22px;
+  margin:13px 0;
+}
+
+.wheel {
+  width:68px;
+  height:68px;
+  margin:15px auto 0;
+  display:grid;
+  place-items:center;
+  border:3px solid var(--gold);
+  border-radius:50%;
+  color:var(--yellow);
+  font-size:39px;
+  background:#581923;
+}
+
+.toolbar {
+  display:flex;
+  gap:9px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+
+button {
+  border:0;
+  border-radius:10px;
+  padding:12px 15px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  background:var(--gold);
+  color:#392019;
+  font-family:inherit;
+}
+
+button:active {transform:scale(.97)}
+
+button.secondary {
+  background:#fff4df;
+  border:1px solid var(--border);
+  color:var(--red);
+}
+
+button.danger {
+  background:#6b2631;
+  color:white;
+}
+
+.teams {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.team {
+  min-width:0;
+  padding:17px 13px;
+  border:2px solid var(--border);
+  border-radius:16px;
+  background:var(--cream);
+  box-shadow:0 7px 18px #63301b16;
+  position:relative;
+  overflow:hidden;
+}
+
+.team:before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:5px;
+  background:var(--red);
+}
+
+.team h2 {
+  text-align:center;
+  color:var(--red);
+  font-size:16px;
+  letter-spacing:2px;
+  margin:8px 0 14px;
+}
+
+.name {
+  width:100%;
+  padding:11px;
+  text-align:center;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:bold;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fffaf0;
+  color:var(--dark);
+  outline:none;
+}
+
+.name:focus,.entry input:focus {
+  border-color:var(--red);
+  box-shadow:0 0 0 2px #791f2c20;
+}
+
+.score {
+  text-align:center;
+  font-family:Georgia,serif;
+  font-size:clamp(43px,10vw,65px);
+  font-weight:bold;
+  color:var(--red);
+  margin:14px 0 4px;
+  font-variant-numeric:tabular-nums;
+}
+
+.score-label {
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:3px;
+  margin-bottom:15px;
+}
+
+.entry {
+  display:flex;
+  gap:6px;
+}
+
+.entry input {
+  width:100%;
+  min-width:0;
+  padding:12px 7px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:16px;
+  background:white;
+  color:var(--text);
+}
+
+.entry button {
+  white-space:nowrap;
+  background:var(--green);
+  color:white;
+}
+
+.hint {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  margin:10px 0 0;
+}
+
+.history {
+  margin-top:18px;
+  padding:17px;
+  border:2px solid var(--border);
+  border-radius:15px;
+  background:var(--cream);
+}
+
+.history h3 {
+  text-align:center;
+  color:var(--red);
+  font-size:19px;
+  margin:0 0 5px;
+}
+
+.subtitle {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  margin:0 0 14px;
+}
+
+.round {
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  align-items:center;
+  gap:7px;
+  padding:12px 3px;
+  border-top:1px dashed var(--border);
+  font-family:system-ui,sans-serif;
+  font-size:12px;
+}
+
+.round b {
+  display:block;
+  color:var(--red);
+  font-size:15px;
+  margin-top:3px;
+}
+
+.round small {
+  color:var(--muted);
+}
+
+.round .total {
+  text-align:right;
+  color:var(--green);
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.empty {
+  padding:23px 5px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.footer {
+  text-align:center;
+  color:#76594b;
+  font-size:11px;
+  line-height:1.8;
+  margin:20px 0 5px;
+}
+
+.footer strong {color:var(--red)}
+
+@media(max-width:420px) {
+  body {padding:12px 9px}
+  .team {padding:14px 9px}
+  .entry {flex-direction:column}
+  .entry button {width:100%}
+  .round {font-size:10px}
+  .toolbar button {padding:10px;font-size:11px}
+}
+</style>
+</head>
+
 <body>
 <main>
-  <header class="top"><h1>🃏 Card Score Calculator</h1><p>Keep both teams' scores in one place</p></header>
-  <div class="toolbar">
-    <button class="secondary" onclick="undo()">↶ Undo last round</button>
-    <button class="secondary" onclick="exportScores()">↓ Download score</button>
-    <button class="danger" onclick="resetGame()">Reset game</button>
+
+<header>
+  <div class="eyebrow">ଓଡ଼ିଶା • Odisha Heritage</div>
+  <div class="wheel">☸</div>
+  <h1>Judgement</h1>
+  <p>Traditional Card Game Score Calculator</p>
+</header>
+
+<div class="ornament">❖ ✦ ❖</div>
+
+<div class="toolbar">
+  <button class="secondary" onclick="undo()">↶ Undo Round</button>
+  <button class="secondary" onclick="exportScores()">↓ Download</button>
+  <button class="danger" onclick="resetGame()">↻ Reset Game</button>
+</div>
+
+<section class="teams">
+
+  <article class="team">
+    <h2>✿ TEAM 01 ✿</h2>
+    <input class="name" id="name1"
+      value="Team A" aria-label="Team 1 name">
+
+    <div class="score" id="score1">0</div>
+    <div class="score-label">TOTAL SCORE</div>
+
+    <div class="entry">
+      <input id="points1" type="number"
+        inputmode="numeric" placeholder="Points">
+      <button onclick="add(1)">+ Add</button>
+    </div>
+
+    <p class="hint">Enter this round's points</p>
+  </article>
+
+  <article class="team">
+    <h2>✿ TEAM 02 ✿</h2>
+    <input class="name" id="name2"
+      value="Team B" aria-label="Team 2 name">
+
+    <div class="score" id="score2">0</div>
+    <div class="score-label">TOTAL SCORE</div>
+
+    <div class="entry">
+      <input id="points2" type="number"
+        inputmode="numeric" placeholder="Points">
+      <button onclick="add(2)">+ Add</button>
+    </div>
+
+    <p class="hint">Enter this round's points</p>
+  </article>
+
+</section>
+
+<section class="history">
+  <h3>☸ Round History ☸</h3>
+  <p class="subtitle">Your game • Your scores • Your memories</p>
+  <div id="history">
+    <div class="empty">❀ No rounds added yet ❀</div>
   </div>
-  <section class="teams">
-    <article class="team">
-      <h2>TEAM 1</h2>
-      <input class="name" id="name1" value="Team A" aria-label="Team 1 name">
-      <div class="score" id="score1">0</div>
-      <div class="entry"><input id="points1" type="number" inputmode="numeric" placeholder="Enter points" aria-label="Team 1 points"><button onclick="add(1)">+ Add</button></div>
-      <p class="hint">Enter this round's points</p>
-    </article>
-    <article class="team">
-      <h2>TEAM 2</h2>
-      <input class="name" id="name2" value="Team B" aria-label="Team 2 name">
-      <div class="score" id="score2">0</div>
-      <div class="entry"><input id="points2" type="number" inputmode="numeric" placeholder="Enter points" aria-label="Team 2 points"><button onclick="add(2)">+ Add</button></div>
-      <p class="hint">Enter this round's points</p>
-    </article>
-  </section>
-  <section class="history">
-    <h3>📋 Round history</h3>
-    <div id="history"><div class="empty">No rounds added yet.</div></div>
-  </section>
-  <p class="footer">Your scores stay on this device in this browser. No account or payment required.</p>
+</section>
+
+<div class="ornament">❖ ✦ ❖</div>
+
+<footer class="footer">
+  <strong>Designed with Odisha Heritage</strong><br>
+  Inspired by the art and traditions of Odisha<br>
+  Scores are stored locally on this device.<br>
+  <strong>Made with ♥</strong>
+</footer>
+
 </main>
+
 <script>
+const STORAGE_KEY = "cardScoreOdisha";
+
 let rounds = [];
-try { rounds = JSON.parse(localStorage.getItem('cardScoreRounds') || '[]'); } catch(e) { rounds=[]; }
-function totals(){return [rounds.reduce((s,r)=>s+r.a,0),rounds.reduce((s,r)=>s+r.b,0)];}
-function save(){localStorage.setItem('cardScoreRounds',JSON.stringify(rounds));render();}
-function add(team){
-  const el=document.getElementById('points'+team), raw=el.value;
-  if(raw.trim()==='' || !Number.isFinite(Number(raw))){alert('Please enter a valid score.');return;}
-  const n=Number(raw); if(!Number.isSafeInteger(n)){alert('Please enter a whole number.');return;}
-  rounds.push({a:team===1?n:0,b:team===2?n:0});
-  el.value='';save();
+let names = ["Team A","Team B"];
+
+try {
+  const saved = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "null"
+  );
+
+  if(saved && Array.isArray(saved.rounds)) {
+    rounds = saved.rounds;
+    names = saved.names || names;
+  } else {
+    rounds = JSON.parse(
+      localStorage.getItem("cardScoreRounds") || "[]"
+    );
+  }
+} catch(e) {
+  rounds = [];
 }
-function undo(){if(!rounds.length){alert('There is no round to undo.');return;}rounds.pop();save();}
-function resetGame(){if(!confirm('Reset all scores and round history?'))return;rounds=[];save();}
-function render(){
-  const t=totals();document.getElementById('score1').textContent=t[0];document.getElementById('score2').textContent=t[1];
-  const h=document.getElementById('history');
-  if(!rounds.length){h.innerHTML='<div class="empty">No rounds added yet.</div>';return;}
-  h.innerHTML=rounds.map((r,i)=>`<div class="round"><span>Round ${i+1}: ${escapeHtml(document.getElementById('name1').value||'Team A')} <b>${r.a>=0?'+':''}${r.a}</b></span><span>${escapeHtml(document.getElementById('name2').value||'Team B')} <b>${r.b>=0?'+':''}${r.b}</b></span><span>${r.a+r.b>=0?'+':''}${r.a+r.b} total</span></div>`).reverse().join('');
+
+const name1 = document.getElementById("name1");
+const name2 = document.getElementById("name2");
+
+name1.value = names[0] || "Team A";
+name2.value = names[1] || "Team B";
+
+function totals() {
+  return [
+    rounds.reduce((s,r)=>s+r.a,0),
+    rounds.reduce((s,r)=>s+r.b,0)
+  ];
 }
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function exportScores(){
- const t=totals(),n1=document.getElementById('name1').value||'Team A',n2=document.getElementById('name2').value||'Team B';
- let out='CARD GAME SCORE\\n'+n1+': '+t[0]+'\\n'+n2+': '+t[1]+'\\n\\nROUND HISTORY\\n';
- rounds.forEach((r,i)=>out+=`Round ${i+1}: ${n1} ${r.a} | ${n2} ${r.b}\\n`);
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'text/plain'}));a.download='card-score.txt';a.click();URL.revokeObjectURL(a.href);
+
+function save() {
+  names = [
+    name1.value || "Team A",
+    name2.value || "Team B"
+  ];
+
+  localStorage.setItem(STORAGE_KEY,
+    JSON.stringify({rounds,names})
+  );
+
+  render();
 }
-document.getElementById('name1').addEventListener('input',render);
-document.getElementById('name2').addEventListener('input',render);
-document.getElementById('points1').addEventListener('keydown',e=>{if(e.key==='Enter')add(1)});
-document.getElementById('points2').addEventListener('keydown',e=>{if(e.key==='Enter')add(2)});
+
+function add(team) {
+  const el = document.getElementById("points"+team);
+  const raw = el.value;
+
+  if(raw.trim()==="" || !Number.isFinite(Number(raw))) {
+    alert("Please enter a valid score.");
+    return;
+  }
+
+  const n = Number(raw);
+
+  if(!Number.isSafeInteger(n)) {
+    alert("Please enter a whole number.");
+    return;
+  }
+
+  rounds.push({
+    a: team===1 ? n : 0,
+    b: team===2 ? n : 0
+  });
+
+  el.value = "";
+  save();
+}
+
+function undo() {
+  if(!rounds.length) {
+    alert("No round available to undo.");
+    return;
+  }
+
+  if(!confirm("Undo the last score entry?")) return;
+
+  rounds.pop();
+  save();
+}
+
+function resetGame() {
+  if(!confirm("Reset all scores and round history?")) return;
+
+  rounds = [];
+  save();
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
+function render() {
+  const t = totals();
+
+  document.getElementById("score1").textContent=t[0];
+  document.getElementById("score2").textContent=t[1];
+
+  const h=document.getElementById("history");
+
+  if(!rounds.length) {
+    h.innerHTML='<div class="empty">❀ No rounds added yet ❀</div>';
+    return;
+  }
+
+  const n1=escapeHtml(name1.value || "Team A");
+  const n2=escapeHtml(name2.value || "Team B");
+
+  h.innerHTML=rounds.map((r,i)=>`
+    <div class="round">
+      <span>
+        <small>ROUND ${i+1}</small>
+        <b>${n1}: ${r.a>=0?"+":""}${r.a}</b>
+      </span>
+      <span>
+        <small>TEAM SCORE</small>
+        <b>${n2}: ${r.b>=0?"+":""}${r.b}</b>
+      </span>
+      <span class="total">
+        ${r.a+r.b>=0?"+":""}${r.a+r.b}
+        <small style="display:block">Combined</small>
+      </span>
+    </div>
+  `).reverse().join("");
+}
+
+function exportScores() {
+  const t=totals();
+  const n1=name1.value || "Team A";
+  const n2=name2.value || "Team B";
+
+  let out="JUDGEMENT CARD SCORE\n";
+  out+="ODISHA EDITION\n\n";
+  out+=n1+": "+t[0]+"\n";
+  out+=n2+": "+t[1]+"\n\n";
+  out+="ROUND HISTORY\n";
+
+  rounds.forEach((r,i)=>{
+    out+=`Round ${i+1}: ${n1} ${r.a} | ${n2} ${r.b}\n`;
+  });
+
+  const blob=new Blob([out],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download="odisha-judgement-score.txt";
+  a.click();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+name1.addEventListener("input",save);
+name2.addEventListener("input",save);
+
+document.getElementById("points1")
+.addEventListener("keydown",e=>{
+  if(e.key==="Enter") add(1);
+});
+
+document.getElementById("points2")
+.addEventListener("keydown",e=>{
+  if(e.key==="Enter") add(2);
+});
+
 render();
-</script>
-</body>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
+
+if("serviceWorker" in navigator) {
+  window.addEventListener("load",()=>{
     navigator.serviceWorker.register("./service-worker.js")
-      .then(() => console.log("App ready for offline use"))
-      .catch(error => console.log("Service Worker Error:", error));
+      .catch(error=>console.log("Service Worker:",error));
   });
 }
 </script>
+</body>
 </html>
